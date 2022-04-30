@@ -22,9 +22,23 @@ class Checker {
   
   getPossibleMoves() {
     let moves = [];
+    let filteredMoves = [];
+    let direction = 1;
 
-    moves.push([[this.row+1, this.col +1],[this.row + 1, this.col - 1]]);
-    return moves
+    if(this.player === BLACK_PLAYER){
+      direction = -1;
+    };
+
+    moves.push([this.row + direction, this.col + direction], [this.row + direction, this.col - direction]);
+    
+    moves.forEach(move => {
+     if(move[0] < 8 && move[1] < 8 && move[0] >= 0 && move[1] >= 0){
+
+      filteredMoves.push(move)
+     };  
+    }); 
+
+    return filteredMoves
   };
 };
 
@@ -47,6 +61,7 @@ class GameData {
     for(let row = 0; row < boardSize; row++){
       for(let j = 0; j < boardSize; j++){
         table.rows[row].cells[j].classList.remove('selected');
+        table.rows[row].cells[j].classList.remove('movement'); 
       } 
     }
   };
@@ -64,9 +79,25 @@ const clickOnCell = (row, col) => {
   if(selectedChecker){
 
   table.rows[selectedChecker.row].cells[selectedChecker.col].classList.add('selected');
+
+  const markMoves = () => {
+
+    let possibleMoves = selectedChecker.getPossibleMoves();
+    for(let move of possibleMoves){
+
+      if(gameData.getChecker(move[0], move[1]) === undefined){
+      table.rows[move[0]].cells[move[1]].classList.add('movement');
+      };
+    } 
+
+  }
+
+  markMoves();
+
+  console.log(selectedChecker.getPossibleMoves()); 
   };
 
-  console.log(selectedChecker); 
+  
 
 };
 
