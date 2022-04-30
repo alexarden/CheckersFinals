@@ -8,14 +8,17 @@ table{
   height: 800px;  
   margin: 0 auto; 
   background-color: white;
+  box-sizing: border-box;
 } 
 tr{
   min-height: 100px; 
+  box-sizing: border-box;
 }
 td{
  height: fit-content; 
  min-width: 100px; 
  min-height: 100px;
+ box-sizing: border-box; 
 }
 
 .dark-cell{
@@ -33,4 +36,8 @@ td{
 img{
   width: 60px;
   height: 60px; 
+}
+
+.selected{
+  border: 6px solid rgb(0, 255, 0); 
 }

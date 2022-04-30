@@ -3,6 +3,7 @@ document.body.appendChild(table);
 
 let boardSize = 8;
 let gameData; 
+let selectedChecker;
 
 const BLACK_PLAYER = 'black';
 const WHITE_PLAYER = 'white';
@@ -32,14 +33,22 @@ class GameData {
     this.checkers = checkers;
   }
 
-  getPiece(row, col) {
+  getChecker(row, col) {
 
     for(let checker of this.checkers){
       if(checker.row === row && checker.col === col){
         return checker
       };
     }
+  };
 
+  resetCells = () => {
+
+    for(let row = 0; row < boardSize; row++){
+      for(let j = 0; j < boardSize; j++){
+        table.rows[row].cells[j].classList.remove('selected');
+      } 
+    }
   };
 
 }
@@ -48,6 +57,16 @@ class GameData {
 const clickOnCell = (row, col) => {
 
   console.log('click happened on ', row, col);
+  selectedChecker = gameData.getChecker(row,col);
+
+  gameData.resetCells();
+
+  if(selectedChecker){
+
+  table.rows[selectedChecker.row].cells[selectedChecker.col].classList.add('selected');
+  };
+
+  console.log(selectedChecker); 
 
 };
 
