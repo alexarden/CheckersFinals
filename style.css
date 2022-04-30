@@ -1,0 +1,15 @@
+body{
+  text-align: center;
+  background-color: rgb(234, 234, 234);
+} 
+
+table{
+  width: 700px;
+  height: 700px;
+  margin: 0 auto; 
+  background-color: white;
+} 
+
+.dark-cell{
+  background-color: black;
+}
