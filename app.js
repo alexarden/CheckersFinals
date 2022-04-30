@@ -1,5 +1,3 @@
-console.log('Good luck, all working good');
-
 let table = document.createElement('table');
 document.body.appendChild(table); 
 
@@ -19,18 +17,47 @@ class Checker {
     this.player = player;
     this.id = id;
   };
+
+  
+  getPossibleMoves() {
+    let moves = [];
+
+    moves.push([[this.row+1, this.col +1],[this.row + 1, this.col - 1]]);
+    return moves
+  };
 };
 
 class GameData {
   constructor(checkers){
     this.checkers = checkers;
   }
+
+  getPiece(row, col) {
+
+    for(let checker of this.checkers){
+      if(checker.row === row && checker.col === col){
+        return checker
+      };
+    }
+
+  };
+
 }
 
 
 const clickOnCell = (row, col) => {
 
   console.log('click happened on ', row, col);
+
+};
+
+const addImages = () => {
+
+  for(let checker of gameData.checkers){
+    let image = document.createElement('img');
+    image.src = `./img/${checker.player}_checker.png`;
+    table.rows[checker.row].cells[checker.col].appendChild(image);
+  }
 
 };
 
@@ -42,13 +69,13 @@ const getNewCheckers = () => {
 
       if(row % 2 === 0 && col % 2 !== 0 && row < 3 || row === 1 && col % 2 === 0){ 
         
-        GAME_CHECKERS.push(new Checker(row, col, BLACK_PLAYER)); 
+        GAME_CHECKERS.push(new Checker(row, col, WHITE_PLAYER)); 
       };
 
       if(row % 2 !== 0 && col % 2 === 0 && row > 4 || row === 6 && col % 2 !== 0){
 
-        GAME_CHECKERS.push(new Checker(row, col, WHITE_PLAYER));
-      };
+        GAME_CHECKERS.push(new Checker(row, col, BLACK_PLAYER)); 
+      };  
     }
   }
   
@@ -57,7 +84,7 @@ const getNewCheckers = () => {
     checker.id = id
     id++; 
   }
-  console.log(GAME_CHECKERS);
+  
 };
 
 const boardInit = () => {
@@ -76,12 +103,19 @@ const boardInit = () => {
       if(row % 2 !== 0 && col % 2 === 0 || row % 2 === 0 && col % 2 !== 0){
         cellElement.classList.add('dark-cell'); 
       };
+
+      if(row % 2 !== 0 && col % 2 !== 0 || row % 2 === 0 && col % 2 === 0){
+        cellElement.classList.add('white-cell'); 
+      }; 
     }
   }
-
+  
   getNewCheckers();
   gameData = new GameData(GAME_CHECKERS);
+  addImages();
 
 };
 
 boardInit();  
+
+console.log(gameData.checkers);

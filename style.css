@@ -4,12 +4,33 @@ body{
 } 
 
 table{
-  width: 700px;
-  height: 700px;
+  width: 800px;
+  height: 800px;  
   margin: 0 auto; 
   background-color: white;
 } 
+tr{
+  min-height: 100px; 
+}
+td{
+ height: fit-content; 
+ min-width: 100px; 
+ min-height: 100px;
+}
 
 .dark-cell{
   background-color: rgb(51, 51, 51);
+  height: 100px;
+  width: 100px;
+}
+
+.white-cell{
+  background-color: rgb(255, 255, 255);
+  height: 100px;
+  width: 100px;
+}
+
+img{
+  width: 60px;
+  height: 60px; 
 }
