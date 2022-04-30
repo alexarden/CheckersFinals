@@ -4,6 +4,7 @@ let table = document.createElement('table');
 document.body.appendChild(table); 
 
 let boardSize = 8;
+let gameData; 
 
 const BLACK_PLAYER = 'black';
 const WHITE_PLAYER = 'white';
@@ -17,10 +18,23 @@ class Checker {
     this.col = col;
     this.player = player;
     this.id = id;
+  };
+};
+
+class GameData {
+  constructor(checkers){
+    this.checkers = checkers;
   }
 }
 
-const setNewGame = () => {
+
+const clickOnCell = (row, col) => {
+
+  console.log('click happened on ', row, col);
+
+};
+
+const getNewCheckers = () => {
 
   for(let row = 0; row < boardSize; row++){
 
@@ -46,12 +60,6 @@ const setNewGame = () => {
   console.log(GAME_CHECKERS);
 };
 
-const clickOnCell = (row, col) => {
-
-  console.log('click happened on ', row, col);
-
-}
-
 const boardInit = () => {
 
   for(let row = 0; row < boardSize; row++){
@@ -71,8 +79,9 @@ const boardInit = () => {
     }
   }
 
-  setNewGame();
+  getNewCheckers();
+  gameData = new GameData(GAME_CHECKERS);
 
 };
 
-boardInit();
+boardInit();  
