@@ -5,6 +5,52 @@ document.body.appendChild(table);
 
 let boardSize = 8;
 
+const BLACK_PLAYER = 'black';
+const WHITE_PLAYER = 'white';
+const GAME_CHECKERS = [];
+
+
+
+class Checker {
+  constructor(row, col, player,id){
+    this.row = row;
+    this.col = col;
+    this.player = player;
+    this.id = id;
+  }
+}
+
+const setNewGame = () => {
+
+  for(let row = 0; row < boardSize; row++){
+
+    for(let col = 0; col < boardSize; col++){
+
+      if(row % 2 === 0 && col % 2 !== 0 && row < 3 || row === 1 && col % 2 === 0){ 
+        
+        GAME_CHECKERS.push(new Checker(row, col, BLACK_PLAYER)); 
+      };
+
+      if(row % 2 !== 0 && col % 2 === 0 && row > 4 || row === 6 && col % 2 !== 0){
+
+        GAME_CHECKERS.push(new Checker(row, col, WHITE_PLAYER));
+      };
+    }
+  }
+  
+  let id = 0;
+  for(let checker of GAME_CHECKERS){
+    checker.id = id
+    id++; 
+  }
+  console.log(GAME_CHECKERS);
+};
+
+const clickOnCell = (row, col) => {
+
+  console.log('click happened on ', row, col);
+
+}
 
 const boardInit = () => {
 
@@ -13,16 +59,19 @@ const boardInit = () => {
     const rowElement = table.insertRow();
     rowElement.id = row;
 
-    for(let cell = 0; cell < boardSize; cell++){
+    for(let col = 0; col < boardSize; col++){
   
       const cellElement = rowElement.insertCell();
-      cellElement.id = `cell_${row}_${cell}`; 
+      cellElement.id = `cell_${row}_${col}`; 
+      cellElement.addEventListener('click', () => clickOnCell(row, col));
 
-      if(row % 2 !== 0 && cell % 2 === 0 || row % 2 === 0 && cell % 2 !== 0){
+      if(row % 2 !== 0 && col % 2 === 0 || row % 2 === 0 && col % 2 !== 0){
         cellElement.classList.add('dark-cell'); 
       };
     }
   }
+
+  setNewGame();
 
 };
 
