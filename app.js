@@ -1,5 +1,5 @@
-let table = document.createElement('table');
-document.body.appendChild(table); 
+let table;
+
 
 let boardSize = 8;
 let gameData; 
@@ -20,7 +20,7 @@ class Checker {
   };
 
   
-  getPossibleMoves() {
+  getPossibleMoves(gameData) {
     let moves = [];
     let filteredMoves = [];
     let direction = 1;
@@ -59,30 +59,20 @@ class GameData {
   resetCells = () => {
 
     for(let row = 0; row < boardSize; row++){
-      for(let j = 0; j < boardSize; j++){
-        table.rows[row].cells[j].classList.remove('selected');
-        table.rows[row].cells[j].classList.remove('movement'); 
+      for(let col = 0; col < boardSize; col++){
+        table.rows[row].cells[col].classList.remove('selected');
+        table.rows[row].cells[col].classList.remove('movement'); 
       } 
     }
   };
 
-}
+  showPossibleMoves = (row, col) => {
 
+    let checker = gameData.getChecker(row, col)
+    if(!checker) return
 
-const clickOnCell = (row, col) => {
-
-  console.log('click happened on ', row, col);
-  selectedChecker = gameData.getChecker(row,col);
-
-  gameData.resetCells();
-
-  if(selectedChecker){
-
-  table.rows[selectedChecker.row].cells[selectedChecker.col].classList.add('selected');
-
-  const markMoves = () => {
-
-    let possibleMoves = selectedChecker.getPossibleMoves();
+    table.rows[checker.row].cells[checker.col].classList.add('selected');
+    let possibleMoves = checker.getPossibleMoves();
     for(let move of possibleMoves){
 
       if(gameData.getChecker(move[0], move[1]) === undefined){
@@ -90,14 +80,28 @@ const clickOnCell = (row, col) => {
       };
     } 
 
-  }
-
-  markMoves();
-
-  console.log(selectedChecker.getPossibleMoves()); 
+    selectedChecker = checker;
   };
 
+};
+
+
+const clickOnCell = (row, col) => {
+
+  console.log('click happened on ', row, col);
+
+  gameData.resetCells();
   
+  if(selectedChecker === undefined){
+    gameData.showPossibleMoves(row, col);
+  } else {
+    gameData.showPossibleMoves(row, col);
+    selectedChecker.row = row;
+    selectedChecker.col = col; 
+    console.log('checker defined');
+    boardInit();
+    selectedChecker = undefined;
+  }
 
 };
 
@@ -112,6 +116,7 @@ const addImages = () => {
 };
 
 const getNewCheckers = () => {
+  console.log('board init');
 
   for(let row = 0; row < boardSize; row++){
 
@@ -138,7 +143,14 @@ const getNewCheckers = () => {
 };
 
 const boardInit = () => {
+  console.log(1)
 
+  if(table !== undefined){
+    table.remove();
+  }
+  
+  table = document.createElement('table');
+  document.body.appendChild(table); 
   for(let row = 0; row < boardSize; row++){
 
     const rowElement = table.insertRow();
@@ -160,12 +172,22 @@ const boardInit = () => {
     }
   }
   
-  getNewCheckers();
-  gameData = new GameData(GAME_CHECKERS);
+  
+  // if(!gameData) return; 
   addImages();
+
 
 };
 
-boardInit();  
+const gameInit = () => {
+  
+  getNewCheckers();
+  gameData = new GameData(GAME_CHECKERS);
+  boardInit();
+  
+};
 
-console.log(gameData.checkers);
+gameInit(); 
+
+
+
