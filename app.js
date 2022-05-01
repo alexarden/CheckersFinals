@@ -1,9 +1,8 @@
 let table;
-
-
 let boardSize = 8;
 let gameData; 
 let selectedChecker;
+let selectedCell; 
 
 const BLACK_PLAYER = 'black';
 const WHITE_PLAYER = 'white';
@@ -84,7 +83,6 @@ class GameData {
     let checker = gameData.getChecker(row, col)
     if(!checker) return
     
-    table.rows[checker.row].cells[checker.col].classList.add('selected');
     let possibleMoves = checker.getPossibleMoves();
     for(let move of possibleMoves){
 
@@ -141,11 +139,12 @@ class GameData {
       if(gameData.getChecker(move[0], move[1]) === undefined){
         table.rows[move[0]].cells[move[1]].classList.add('movement');
       };
-    
-
     }
 
-    selectedChecker = checker;
+    selectedCell = table.rows[checker.row].cells[checker.col];
+    selectedCell.classList.add('selected')
+    selectedChecker = checker; 
+
     console.log(selectedChecker);
   };
   
@@ -160,6 +159,31 @@ class GameData {
       };
     }
   };
+  
+  tryMove(row, col) { 
+
+    if(table.rows[row].cells[col].classList.contains('movement')){
+  
+      selectedChecker.row = row;
+      selectedChecker.col = col; 
+      return true;
+    };
+    return false;
+  };
+
+  tryEat(row, col) {
+
+    if(table.rows[row].cells[col].classList.contains('eat')){
+      let lastRowPosition = selectedChecker.row;
+      let lastColPosition = selectedChecker.col;
+      selectedChecker.row = row;
+      selectedChecker.col = col; 
+      gameData.removeChecker((lastRowPosition + selectedChecker.row) / 2, (lastColPosition + selectedChecker.col) / 2);
+
+      return true;
+    };
+   return false;
+  }
 
   switchTurn() {
 
@@ -170,16 +194,6 @@ class GameData {
       
       gameData.turn = WHITE_PLAYER;
     };
-  };
-
-  tryMove(row, col) { 
-    if(table.rows[row].cells[col].classList.contains('movement')){
-  
-      selectedChecker.row = row;
-      selectedChecker.col = col; 
-      return true;
-    };
-    return false;
   };
 
 };
@@ -201,41 +215,30 @@ const clickOnCell = (row, col) => {
     
   } else {
 
-    if(selectedChecker.player === gameData.turn){
-
-      console.log(selectedChecker);
-      gameData.showPossibleMoves(row, col);
-
-      // if(table.rows[row].cells[col].classList.contains('movement')){
-  
-      //   selectedChecker.row = row;
-      //   selectedChecker.col = col; 
-      // };
-      gameData.tryMove(row, col);
-     
-        
-      if(table.rows[row].cells[col].classList.contains('eat')){
-        let lastRowPosition = selectedChecker.row;
-        let lastColPosition = selectedChecker.col;
-        selectedChecker.row = row;
-        selectedChecker.col = col; 
-        gameData.removeChecker((lastRowPosition + selectedChecker.row) / 2, (lastColPosition + selectedChecker.col) / 2);
+    if(selectedChecker.player === gameData.turn){ 
+      
+      if(gameData.tryMove(row, col)){
+        gameData.switchTurn();
+        selectedChecker = undefined;
       };
 
-      gameData.resetMarks();
-      gameData.switchTurn();
-      boardInit();
-      selectedChecker = undefined;
+      if(gameData.tryEat(row, col)){
+        gameData.switchTurn();
+        selectedChecker = undefined; 
+      };
 
+      selectedChecker = undefined;
+      gameData.resetMarks();
+      gameData.showPossibleMoves();
+      boardInit();
       console.log('checker defined');
 
     }else{
-
-      selectedChecker = undefined;
-    };
-   
-    
-  }
+      gameData.resetMarks(); 
+      gameData.showPossibleMoves(row, col);
+    };  
+  };
+  
 };
 
 const addImages = () => {
