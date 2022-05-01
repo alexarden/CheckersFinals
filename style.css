@@ -45,3 +45,7 @@ img{
 .movement{
   border: 6px solid rgb(255, 255, 0); 
 }
+
+.eat{
+  border: 6px solid rgb(255, 0, 0);
+}
