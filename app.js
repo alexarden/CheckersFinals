@@ -17,7 +17,7 @@ class Checker {
     this.col = col;
     this.player = player;
     this.canEat = false;
-    this.canMove = true;      
+    this.canMove = false;       
     this.id = id;
   };
 
@@ -36,11 +36,13 @@ class Checker {
       moves.push([this.row + direction, this.col + direction]);
     } else {
       if(gameData.getChecker(this.row + direction, this.col + direction).player !== this.player){
-        if(this.row + direction * 2 < 8 && this.col + direction * 2 < 8){
+        if(this.row + direction * 2 <= 7 && this.col + direction * 2 <= 7){
           if(gameData.getChecker(this.row + direction * 2, this.col + direction * 2) === undefined && this.player === gameData.turn){
             moves.push([this.row + direction * 2, this.col + direction * 2]);
-            table.rows[this.row + direction * 2].cells[this.col + direction * 2].classList.add('eat');
-            this.canEat = true; 
+            if(table.rows[this.row + direction * 2].cells[this.col + direction * 2] !== undefined){
+              table.rows[this.row + direction * 2].cells[this.col + direction * 2].classList.add('eat');
+              this.canEat = true; 
+            };
           }else{
             this.canEat = false;
           };
@@ -52,11 +54,13 @@ class Checker {
       moves.push([this.row + direction, this.col - direction]);
     }else {
       if(gameData.getChecker(this.row + direction, this.col - direction).player !== this.player){
-        if(this.row + direction * 2 < 8 && this.col - direction * 2 < 8 ){ 
+        if(this.row + direction * 2 <= 7 && this.col - direction * 2 <= 7 ){   
           if(gameData.getChecker(this.row + direction * 2, this.col - direction * 2) === undefined && this.player === gameData.turn){  
             moves.push([this.row + direction * 2, this.col - direction * 2]);
-            table.rows[this.row + direction * 2].cells[this.col - direction * 2].classList.add('eat');
-            this.canEat = true;
+            if(table.rows[this.row + direction * 2].cells[this.col - direction * 2] !== undefined){
+              table.rows[this.row + direction * 2].cells[this.col - direction * 2].classList.add('eat');
+              this.canEat = true;
+            };
           }else{
             this.canEat = false;
           };
@@ -179,7 +183,39 @@ class GameData {
       gameData.turn = WHITE_PLAYER;
     };
   };
+};
 
+const checkForEats = () => {
+
+  // As a defalut all chekckers are disabled.
+  // if no eat can be made all checker can move.
+  //if an eat is available only the one checker who can eat can move.
+
+  const checkerCanEat = [];
+
+  for(let checker of gameData.checkers){
+    let result = checker.getPossibleMoves(gameData) 
+    console.log(result)
+    if(checker.canEat === true){
+    checkerCanEat.push(checker);
+    }
+  }
+
+  console.log(checkerCanEat);
+
+  if(checkerCanEat.length === 0){
+    for(let checker of gameData.checkers){
+      checker.canMove = true;
+    }
+  }else{
+    for(let checker of gameData.checkers){
+      checker.canMove = false; 
+    }
+  }
+
+  checkerCanEat.forEach(checker => {
+    checker.canMove = true;
+  }); 
 };
 
 
@@ -187,6 +223,7 @@ const clickOnCell = (row, col) => {
 
   console.log(gameData.checkers);
 
+  checkForEats();  
 
 
   if(selectedChecker === undefined){
@@ -211,7 +248,7 @@ const clickOnCell = (row, col) => {
   } else {
     
     console.log('checker defined');
-    if(selectedChecker.player === gameData.turn){ 
+    if(selectedChecker.player === gameData.turn && selectedChecker.canMove === true){  
 
       
       if(gameData.tryMove(row, col)){
