@@ -16,8 +16,9 @@ class Checker {
     this.row = row;
     this.col = col;
     this.player = player;
-    this.id = id;
     this.canEat = false;
+    this.canMove = true;      
+    this.id = id;
   };
 
   
@@ -30,7 +31,39 @@ class Checker {
       direction = -1;
     };
 
-    moves.push([this.row + direction, this.col + direction], [this.row + direction, this.col - direction]);
+   
+    if(gameData.getChecker(this.row + direction, this.col + direction) === undefined){
+      moves.push([this.row + direction, this.col + direction]);
+    } else {
+      if(gameData.getChecker(this.row + direction, this.col + direction).player !== this.player){
+        if(this.row + direction * 2 < 8 && this.col + direction * 2 < 8){
+          if(gameData.getChecker(this.row + direction * 2, this.col + direction * 2) === undefined && this.player === gameData.turn){
+            moves.push([this.row + direction * 2, this.col + direction * 2]);
+            table.rows[this.row + direction * 2].cells[this.col + direction * 2].classList.add('eat');
+            this.canEat = true; 
+          }else{
+            this.canEat = false;
+          };
+        };
+      };
+    };
+    
+    if(gameData.getChecker(this.row + direction, this.col - direction) === undefined){
+      moves.push([this.row + direction, this.col - direction]);
+    }else {
+      if(gameData.getChecker(this.row + direction, this.col - direction).player !== this.player){
+        if(this.row + direction * 2 < 8 && this.col - direction * 2 < 8 ){ 
+          if(gameData.getChecker(this.row + direction * 2, this.col - direction * 2) === undefined && this.player === gameData.turn){  
+            moves.push([this.row + direction * 2, this.col - direction * 2]);
+            table.rows[this.row + direction * 2].cells[this.col - direction * 2].classList.add('eat');
+            this.canEat = true;
+          }else{
+            this.canEat = false;
+          };
+        };
+      };
+    };
+    
     
     moves.forEach(move => {
       if(move[0] < 8 && move[1] < 8 && move[0] >= 0 && move[1] >= 0){
@@ -83,69 +116,20 @@ class GameData {
     let checker = gameData.getChecker(row, col)
     if(!checker) return
     
-    let possibleMoves = checker.getPossibleMoves();
+    let possibleMoves = checker.getPossibleMoves(gameData);
     for(let move of possibleMoves){
 
-      if(gameData.getChecker(move[0], move[1]) !== undefined){
-        let checkerOpponent = gameData.getChecker(move[0], move[1]);
-      
-        if(checkerOpponent.player !== checker.player){
+      if(checker.player === gameData.turn){
 
-          if(checker.player === WHITE_PLAYER){
-
-            if(checkerOpponent.col < checker.col && gameData.getChecker(move[0] + 1, move[1] - 1) === undefined){
-
-              if(table.rows[move[0] + 1].cells[move[1] - 1] !== undefined){
-
-               table.rows[move[0] + 1].cells[move[1] - 1].classList.add('eat');
-               checker.canEat = true;
-              }
-            };
-
-            if(checkerOpponent.col > checker.col && gameData.getChecker(move[0] + 1, move[1] + 1) === undefined){
-
-              if(table.rows[move[0] + 1].cells[move[1] + 1] !== undefined){
-               
-               table.rows[move[0] + 1].cells[move[1] + 1].classList.add('eat');
-               checker.canEat = true;
-             }
-            };
-          };
-
-          if(checker.player === BLACK_PLAYER){
-
-            if(checkerOpponent.col < checker.col && gameData.getChecker(move[0] - 1, move[1] - 1) === undefined){
-              if(table.rows[move[0] - 1].cells[move[1] - 1] !== undefined){
-
-               table.rows[move[0] - 1].cells[move[1] - 1].classList.add('eat');
-               checker.canEat = true;
-              };
-            };
-
-            if(checkerOpponent.col > checker.col && gameData.getChecker(move[0] - 1, move[1] + 1) === undefined){
-
-              if(table.rows[move[0] - 1].cells[move[1] + 1] !== undefined){
-
-               table.rows[move[0] - 1].cells[move[1] + 1].classList.add('eat');
-               checker.canEat = true;
-              }
-
-             
-            }; 
-          };
+        if(gameData.getChecker(move[0], move[1]) === undefined){
+          table.rows[move[0]].cells[move[1]].classList.add('movement');
         };
       };
-
-      if(gameData.getChecker(move[0], move[1]) === undefined){
-        table.rows[move[0]].cells[move[1]].classList.add('movement');
-      };
-    }
+    } 
 
     selectedCell = table.rows[checker.row].cells[checker.col];
     selectedCell.classList.add('selected')
     selectedChecker = checker; 
-
-    console.log(selectedChecker);
   };
   
   removeChecker(row, col) {
@@ -200,45 +184,62 @@ class GameData {
 
 
 const clickOnCell = (row, col) => {
-  let table = document.getElementById('table');
 
-  console.log('click happened on ', row, col);
   console.log(gameData.checkers);
-  console.log(gameData.turn) 
 
-  
-    
+
+
   if(selectedChecker === undefined){
 
     gameData.resetMarks();
     gameData.showPossibleMoves(row, col);
-    
-  } else {
+    console.log(selectedChecker)
 
+     // remove movement when can eat.
+     for(let i = 0; i < boardSize; i++){
+      for(let j = 0; j < boardSize; j++){
+        if(table.rows[i].cells[j].classList.contains('eat')){
+          for(let i = 0; i < boardSize; i++){
+            for(let j = 0; j < boardSize; j++){
+              table.rows[i].cells[j].classList.remove('movement');
+            }
+          }
+        };
+      }
+    }
+  
+  } else {
+    
+    console.log('checker defined');
     if(selectedChecker.player === gameData.turn){ 
+
       
       if(gameData.tryMove(row, col)){
         gameData.switchTurn();
         selectedChecker = undefined;
       };
-
+      
       if(gameData.tryEat(row, col)){
         gameData.switchTurn();
         selectedChecker = undefined; 
+        for(let checker of gameData.checkers){
+          checker.canEat = false;  
+        }
       };
 
-      selectedChecker = undefined;
-      gameData.resetMarks();
-      gameData.showPossibleMoves();
-      boardInit();
-      console.log('checker defined');
-
+      
+      gameData.resetMarks(); 
+      gameData.showPossibleMoves(row, col); 
+      boardInit();  
+      selectedChecker = undefined; 
     }else{
+
+      selectedChecker = undefined;  
       gameData.resetMarks(); 
       gameData.showPossibleMoves(row, col);
-    };  
+      
+    }; 
   };
-  
 };
 
 const addImages = () => {
@@ -252,8 +253,7 @@ const addImages = () => {
 };
 
 const getNewCheckers = () => {
-  console.log('board init');
-
+  
   for(let row = 0; row < boardSize; row++){
 
     for(let col = 0; col < boardSize; col++){
