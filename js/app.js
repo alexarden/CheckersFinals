@@ -154,7 +154,7 @@ const getNewCheckers = () => {
 
     for(let col = 0; col < boardSize; col++){
 
-      if( row === 3 && col % 2 === 0 || row === 2 && col % 2 !== 0 ){   //row % 2 === 0 && col % 2 !== 0 && row < 3 ||
+      if(row % 2 === 0 && col % 2 !== 0 && row < 3 || row === 1 && col % 2 === 0){   
         GAME_CHECKERS.push(new Checker(row, col, WHITE_PLAYER, 'pawn'));    
       };
 
