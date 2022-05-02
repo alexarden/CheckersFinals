@@ -25,11 +25,16 @@ class GameData {
   };
 
   showPossibleMoves = (row, col) => {
-
+    let possibleMoves;
     let checker = gameData.getChecker(row, col)
     if(!checker) return
     
-    let possibleMoves = checker.getPossibleMoves(gameData);
+    if(checker.type === 'pawn'){
+      possibleMoves = checker.getPossiblePawnMoves(gameData);
+    }else if(checker.type === 'berserker'){
+      possibleMoves = checker.getPossibleBerserkerMoves(gameData); 
+    }
+     
     for(let move of possibleMoves){
 
       if(checker.player === gameData.turn){
@@ -103,16 +108,16 @@ class GameData {
       winner = BLACK_PLAYER;
       document.body.appendChild(div);
       div.classList.add('winner');
-      div.innerHTML = `Black player won! <br> Fresh to restart`; 
+      div.innerHTML = `Black player won! <br> Refresh to start new game`; 
     };
   
     if(blackMoves.length === 0){
       this.resetMarks();
       this.turn = GAME_OVER;
-      winner = BLACK_PLAYER;
+      winner = WHITE_PLAYER; 
       document.body.appendChild(div); 
       div.classList.add('winner');
-      div.innerHTML = `White player won! <br> Fresh to restart`; 
+      div.innerHTML = `White player won! <br> Refresh to start new game`;  
     }; 
   ;}
 
@@ -132,10 +137,10 @@ class GameData {
     if(blackCheckers.length === 0){
       gameData.resetMarks();
       gameData.turn = GAME_OVER;
-      winner = BLACK_PLAYER;
+      winner = WHITE_PLAYER; 
       document.body.appendChild(div);
       div.classList.add('winner');
-      div.innerHTML = `White player won! <br> Fresh to restart`; 
+      div.innerHTML = `White player won! <br> Refresh to start new game`; 
     };
   
     if(whiteCheckers.length === 0){
@@ -144,9 +149,30 @@ class GameData {
       winner = BLACK_PLAYER;
       document.body.appendChild(div);
       div.classList.add('winner');
-      div.innerHTML = `Black player won! <br> Fresh to restart`; 
+      div.innerHTML = `Black player won! <br> Refresh to start new game`; 
     };
   
+  };
+
+  tryBerserker = () => {
+    if(!selectedChecker) return
+
+    if(selectedChecker.type === 'pawn'){
+
+      selectedChecker.getPossiblePawnMoves(gameData);
+
+    }else if(selectedChecker.type === 'berserker'){
+
+      selectedChecker.getPossibleBerserkerMoves(gameData);
+    };
+
+    if(selectedChecker.canEat = true){
+
+      selectedChecker.type = 'berserker';
+      selectedChecker.getPossibleBerserkerMoves(gameData);
+      boardInit(); 
+      return  
+    };
   };
 
 };
