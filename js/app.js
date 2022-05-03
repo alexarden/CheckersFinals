@@ -5,6 +5,7 @@ let selectedChecker;
 let selectedCell; 
 let winner;
 let div = document.createElement('div');
+let turn = document.createElement('div');
 let lastCheckerType;
 
 const BLACK_PLAYER = 'Black';
@@ -13,11 +14,6 @@ const GAME_CHECKERS = [];
 const TABLE_ID = 'table';
 const GAME_OVER = 'game over';
 let checkerCanEat = [];
-
-
-//TODO: make queen.
-//XXX: make video explaining the code. 
-
 
 const checkForEats = () => {
 
@@ -31,29 +27,30 @@ const checkForEats = () => {
 
   for(let checker of gameData.checkers){
 
-    let result;
+    let possibleMoves;
 
     if(checker.type === 'pawn'){
-     result = checker.getPossiblePawnMoves(gameData) 
+     possibleMoves = checker.getPossiblePawnMoves(gameData) 
     }else if(checker.type === 'berserker'){
-     result = checker.getPossibleBerserkerMoves(gameData)
+     possibleMoves = checker.getPossibleBerserkerMoves(gameData)
     }else if(checker.type === 'queen'){
-    result = checker.getPossibleQueenMoves(gameData)   
+     possibleMoves = checker.getPossibleQueenMoves(gameData)   
     }
     
-    if(!result) return; 
+    if(!possibleMoves) return; 
 
-    if(checker.player === WHITE_PLAYER && result.length !== 0){ 
-      whiteMoves.push(result)
+    if(checker.player === WHITE_PLAYER && possibleMoves.length !== 0){ 
+      whiteMoves.push(possibleMoves)
     }
-    if(checker.player === BLACK_PLAYER && result.length !== 0){ 
-      blackMoves.push(result)
+    if(checker.player === BLACK_PLAYER && possibleMoves.length !== 0){ 
+      blackMoves.push(possibleMoves)
     }
     if(checker.canEat === true && checker.player === gameData.turn){
-    checkerCanEat.push(checker);
+     checkerCanEat.push(checker);
     }
   }
   
+  // check if game over.
   gameData.checkForMovesEnd(whiteMoves, blackMoves);
  
   if(checkerCanEat.length === 0){
@@ -74,7 +71,6 @@ const checkForEats = () => {
 
 const removeMovmentWhenCanEat = () => {
 
-  // remove movement when can eat.
   for(let i = 0; i < boardSize; i++){
     for(let j = 0; j < boardSize; j++){
       if(table.rows[i].cells[j].classList.contains('eat')){
@@ -86,14 +82,18 @@ const removeMovmentWhenCanEat = () => {
       };
     }
   }
-
 };
 
 const clickOnCell = (row, col) => {
-  // console.log(gameData.checkers) 
-  checkForEats(); 
-  console.log(gameData.turn);
    
+  // shows current players turn. 
+  document.body.appendChild(turn); 
+  turn.classList.add('turn')
+  turn.innerHTML = `${gameData.turn} player turn`
+  
+  // determine witch checker can move.
+  checkForEats(); 
+  
   if(selectedChecker === undefined){
     
     gameData.resetMarks();
@@ -103,9 +103,6 @@ const clickOnCell = (row, col) => {
   } else {
     
     if(selectedChecker.player === gameData.turn && selectedChecker.canMove === true){  
-
-      console.log(gameData.turn);
-      console.log(selectedChecker);
 
       if(selectedChecker.type === 'berserker'){
         
@@ -141,8 +138,7 @@ const clickOnCell = (row, col) => {
 
       gameData.checkForCheckersEnd(); 
       gameData.resetMarks(); 
-      // gameData.showPossibleMoves(row, col); 
-      removeMovmentWhenCanEat()
+      removeMovmentWhenCanEat();
       boardInit();  
       selectedChecker = undefined; 
     
@@ -173,9 +169,10 @@ const getNewCheckers = () => {
     for(let col = 0; col < boardSize; col++){
 
       if(row % 2 === 0 && col % 2 !== 0 && row < 3 || row === 1 && col % 2 === 0 ){ 
+      // if( row === 3 && col % 2 === 0 || row === 2 && col % 2 !== 0){
         GAME_CHECKERS.push(new Checker(row, col, WHITE_PLAYER, 'pawn'));    
       };
-
+      // if(row === 4 && col % 2 !== 0 || row === 5 && col % 2 === 0){
       if(row % 2 !== 0 && col % 2 === 0 && row > 4 || row === 6 && col % 2 !== 0){
 
         GAME_CHECKERS.push(new Checker(row, col, BLACK_PLAYER, 'pawn')); 

@@ -50,7 +50,6 @@ class GameData {
     selectedCell = table.rows[checker.row].cells[checker.col];
     selectedCell.classList.add('selected')
     selectedChecker = checker; 
-    console.log(selectedChecker)
   };
   
   removeChecker(row, col) {
@@ -173,12 +172,8 @@ class GameData {
   tryBerserker = () => {
 
     if(!selectedChecker) return
-
-    // if(selectedChecker.type === 'pawn'){
-
-    //   selectedChecker.getPossiblePawnMoves(gameData);
-
-    // }else 
+    
+    // remember if checker is pawn or queen.
     if(selectedChecker.type !== 'berserker'){
     lastCheckerType = selectedChecker.type; 
     } 
@@ -206,7 +201,6 @@ class GameData {
         checker.canMove = false; 
         boardInit();
         gameData.switchTurn(); 
-        console.log('queen: ',this.turn);
         return true;
       } 
     }

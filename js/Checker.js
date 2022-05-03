@@ -65,9 +65,7 @@ class Checker {
 
         filteredMoves.push(move)
       };  
-      });  
-      
-      // console.log('filtered moves: ', filteredMoves) 
+      }); 
       return filteredMoves
     };
   };
@@ -133,86 +131,47 @@ class Checker {
       if(this.player === BLACK_PLAYER){
         direction = -1;
       };
-
+      
       for(let i = 0; i < boardSize; i++){
+      let downRow = this.row + i;
+      let upRow = this.row - i;
+      let goRight = this.col + i;
+      let goLeft = this.col - i;
+      let downTwoRows = this.row + i + 1;
+      let upTwoRows = this.row - i - 1;
+      let eatRight = this.col + i + 1;
+      let eatLeft = this.col - i - 1;
 
-        if(gameData.getChecker(this.row + i, this.col + i) === undefined){
-          moves.push([this.row + i, this.col + i]);
-        }else{
-          if(gameData.getChecker(this.row + i, this.col + i).player !== this.player){
-            moves.push(this.row + i + 1, this.col + i + 1);
-            if(table.rows[this.row + i + 1] !== undefined){
-              if(table.rows[this.row + i + 1].cells[this.col + i + 1] !== undefined){
-                if(gameData.getChecker(this.row + i + 1, this.col + i + 1) === undefined){
-                  if(this.player === gameData.turn){
-                    table.rows[this.row + i + 1].cells[this.col + i + 1].classList.add('eat');
-                    this.canEat = true; 
-                    break;
+      const getQueenMoves = (rowDirection, colDirection, eatRowMove, eatColMove) => {
+        for(let j = 0; j < boardSize; j++){
+
+          if(gameData.getChecker(rowDirection, colDirection) === undefined){
+            moves.push([rowDirection, colDirection]);
+          }else{
+            if(gameData.getChecker(rowDirection, colDirection).player !== this.player){
+              moves.push(eatRowMove, eatColMove);
+              if(table.rows[eatRowMove] !== undefined){
+                if(table.rows[eatRowMove].cells[eatColMove] !== undefined){
+                  if(gameData.getChecker(eatRowMove, eatColMove) === undefined){
+                    if(this.player === gameData.turn){
+                      table.rows[eatRowMove].cells[eatColMove].classList.add('eat');
+                      this.canEat = true; 
+                      i = 8;
+                      break;
+                    };
                   };
-                };
-              } 
-            } 
-          }
+                }; 
+              }; 
+            };
+          };
         }
-
-        if(gameData.getChecker(this.row + i, this.col - i) === undefined){
-          moves.push([this.row + i, this.col - i]);
-        }else{
-          if(gameData.getChecker(this.row + i, this.col - i).player !== this.player){
-            moves.push(this.row + i + 1, this.col - i - 1);
-            if(table.rows[this.row + i + 1] !== undefined){
-              if(table.rows[this.row + i + 1].cells[this.col - i - 1] !== undefined){
-                if(gameData.getChecker(this.row + i + 1, this.col - i - 1) === undefined){
-                  if(this.player === gameData.turn){
-                    table.rows[this.row + i + 1].cells[this.col - i - 1].classList.add('eat');
-                    this.canEat = true;
-                    break;
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        if(gameData.getChecker(this.row - i, this.col + i) === undefined){
-          moves.push([this.row - i, this.col + i]);
-        }else{
-          if(gameData.getChecker(this.row - i, this.col + i).player !== this.player){
-            moves.push(this.row - i - 1, this.col + i + 1);
-            if(table.rows[this.row - i - 1] !== undefined){
-              if(table.rows[this.row - i - 1].cells[this.col + i + 1] !== undefined){
-                if(gameData.getChecker(this.row - i - 1, this.col + i + 1) === undefined){
-                  if(this.player === gameData.turn){
-                    table.rows[this.row - i - 1].cells[this.col + i + 1].classList.add('eat');
-                    this.canEat = true; 
-                    break;
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        if(gameData.getChecker(this.row - i, this.col - i) === undefined){
-          moves.push([this.row - i, this.col - i]); 
-        }else{
-          if(gameData.getChecker(this.row - i, this.col - i).player !== this.player){
-            moves.push(this.row - i - 1, this.col - i - 1);
-            if(table.rows[this.row - i - 1] !== undefined){
-              if(table.rows[this.row - i - 1].cells[this.col - i - 1] !== undefined){
-                if(gameData.getChecker(this.row - i - 1, this.col - i - 1) === undefined){
-                  if(this.player === gameData.turn){
-                    table.rows[this.row - i - 1].cells[this.col - i - 1].classList.add('eat');
-                    this.canEat = true;
-                    break;
-                  }
-                } 
-              }
-            }
-          }
-        }
-      }
-
+      };
+      
+      getQueenMoves(downRow, goRight, downTwoRows, eatRight);
+      getQueenMoves(downRow, goLeft, downTwoRows, eatLeft);
+      getQueenMoves(upRow, goRight, upTwoRows, eatRight);
+      getQueenMoves(upRow, goLeft, upTwoRows, eatLeft);
+      };
 
       moves.forEach(move => {
         if(move[0] < 8 && move[1] < 8 && move[0] >= 0 && move[1] >= 0){
@@ -224,6 +183,7 @@ class Checker {
 
       return filteredMoves
     };
+  
   };
 
   getOpponent() {
