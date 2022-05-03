@@ -33,6 +33,8 @@ class GameData {
       possibleMoves = checker.getPossiblePawnMoves(gameData);
     }else if(checker.type === 'berserker'){
       possibleMoves = checker.getPossibleBerserkerMoves(gameData); 
+    }else if(checker.type === 'queen'){ 
+      possibleMoves = checker.getPossibleQueenMoves(gameData); 
     }
      
     for(let move of possibleMoves){
@@ -48,6 +50,7 @@ class GameData {
     selectedCell = table.rows[checker.row].cells[checker.col];
     selectedCell.classList.add('selected')
     selectedChecker = checker; 
+    console.log(selectedChecker)
   };
   
   removeChecker(row, col) {
@@ -80,11 +83,31 @@ class GameData {
         let lastRowPosition = selectedChecker.row;
         let lastColPosition = selectedChecker.col;
         selectedChecker.row = row;
-        selectedChecker.col = col; 
-        gameData.removeChecker((lastRowPosition + selectedChecker.row) / 2, (lastColPosition + selectedChecker.col) / 2);
-      };
+        selectedChecker.col = col;
+        if(selectedChecker.type === 'queen'){
 
-      return true;
+          if(selectedChecker.row > lastRowPosition && selectedChecker.col > lastColPosition){
+            gameData.removeChecker(selectedChecker.row - 1, selectedChecker.col - 1);
+            return true;
+          }
+          if(selectedChecker.row > lastRowPosition && selectedChecker.col < lastColPosition){
+            gameData.removeChecker(selectedChecker.row - 1, selectedChecker.col + 1);
+            return true;
+          }
+          if(selectedChecker.row < lastRowPosition && selectedChecker.col > lastColPosition){
+            gameData.removeChecker(selectedChecker.row + 1, selectedChecker.col - 1);
+            return true;
+          }
+          if(selectedChecker.row < lastRowPosition && selectedChecker.col < lastColPosition){
+            gameData.removeChecker(selectedChecker.row + 1, selectedChecker.col + 1);
+            return true;
+          }
+
+        }else{
+          gameData.removeChecker((lastRowPosition + selectedChecker.row) / 2, (lastColPosition + selectedChecker.col) / 2);
+          return true;
+        } 
+      };
     };
    return false;
   };
@@ -102,24 +125,21 @@ class GameData {
 
   checkForMovesEnd = (whiteMoves, blackMoves) => { 
 
-    if(whiteMoves.length === 0){
-      this.resetMarks();
-      this.turn = GAME_OVER;
-      winner = BLACK_PLAYER;
-      document.body.appendChild(div);
-      div.classList.add('winner');
-      div.innerHTML = `Black player won! <br> Refresh to start new game`; 
+    const movesEndGame = (MovesArray, player) => {
+
+      if(MovesArray.length === 0){
+        this.resetMarks();
+        this.turn = GAME_OVER;
+        winner = player;
+        document.body.appendChild(div);
+        div.classList.add('winner');
+        div.innerHTML = `${winner} player won! <br> Refresh to start new game`; 
+      };
     };
-  
-    if(blackMoves.length === 0){
-      this.resetMarks();
-      this.turn = GAME_OVER;
-      winner = WHITE_PLAYER; 
-      document.body.appendChild(div); 
-      div.classList.add('winner');
-      div.innerHTML = `White player won! <br> Refresh to start new game`;  
-    }; 
-  ;}
+
+    movesEndGame(whiteMoves, BLACK_PLAYER);
+    movesEndGame(blackMoves, WHITE_PLAYER);
+  };
 
   checkForCheckersEnd = () => {
 
@@ -128,40 +148,42 @@ class GameData {
   
     for(let checker of this.checkers){
       if(checker.player === BLACK_PLAYER){
-       blackCheckers.push(checker); 
+        blackCheckers.push(checker); 
       }else{
         whiteCheckers.push(checker);
       };
     }
-  
-    if(blackCheckers.length === 0){
-      gameData.resetMarks();
-      gameData.turn = GAME_OVER;
-      winner = WHITE_PLAYER; 
-      document.body.appendChild(div);
-      div.classList.add('winner');
-      div.innerHTML = `White player won! <br> Refresh to start new game`; 
+
+    const checkersEndGame = (checkersArray, player) => {
+
+      if(checkersArray.length === 0){
+        gameData.resetMarks();
+        gameData.turn = GAME_OVER;
+        winner = player; 
+        document.body.appendChild(div);
+        div.classList.add('winner');
+        div.innerHTML = `${winner} player won! <br> Refresh to start new game`; 
+      };
     };
-  
-    if(whiteCheckers.length === 0){
-      gameData.resetMarks();
-      gameData.turn = GAME_OVER;
-      winner = BLACK_PLAYER;
-      document.body.appendChild(div);
-      div.classList.add('winner');
-      div.innerHTML = `Black player won! <br> Refresh to start new game`; 
-    };
-  
+
+    checkersEndGame(blackCheckers, WHITE_PLAYER);
+    checkersEndGame(whiteCheckers, BLACK_PLAYER);
   };
 
   tryBerserker = () => {
+
     if(!selectedChecker) return
 
-    if(selectedChecker.type === 'pawn'){
+    // if(selectedChecker.type === 'pawn'){
 
-      selectedChecker.getPossiblePawnMoves(gameData);
+    //   selectedChecker.getPossiblePawnMoves(gameData);
 
-    }else if(selectedChecker.type === 'berserker'){
+    // }else 
+    if(selectedChecker.type !== 'berserker'){
+    lastCheckerType = selectedChecker.type; 
+    } 
+    
+    if(selectedChecker.type === 'berserker'){
 
       selectedChecker.getPossibleBerserkerMoves(gameData);
     };
@@ -173,6 +195,22 @@ class GameData {
       boardInit(); 
       return  
     };
+  };
+
+  tryQueen = () => {
+
+    for(let checker of this.checkers){
+      if(checker.player === BLACK_PLAYER && checker.row === 0 || checker.player === WHITE_PLAYER && checker.row === 7){
+        checker.type = 'queen';
+        checker.canEat = false;
+        checker.canMove = false; 
+        boardInit();
+        gameData.switchTurn(); 
+        console.log('queen: ',this.turn);
+        return true;
+      } 
+    }
+    return false;
   };
 
 };
