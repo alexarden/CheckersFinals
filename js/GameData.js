@@ -1,14 +1,14 @@
 class GameData {
   constructor(checkers, firstPlayer){
     this.checkers = checkers;
-    this.turn = firstPlayer
+    this.turn = firstPlayer;
   }
 
   getChecker(row, col) {
 
     for(let checker of this.checkers){
       if(checker.row === row && checker.col === col){
-        return checker
+        return checker;
       };
     }
   };
@@ -26,8 +26,8 @@ class GameData {
 
   showPossibleMoves = (row, col) => {
     let possibleMoves;
-    let checker = gameData.getChecker(row, col)
-    if(!checker) return
+    let checker = gameData.getChecker(row, col);
+    if(!checker) return;
     
     if(checker.type === 'pawn'){
       possibleMoves = checker.getPossiblePawnMoves(gameData);
@@ -35,7 +35,7 @@ class GameData {
       possibleMoves = checker.getPossibleBerserkerMoves(gameData); 
     }else if(checker.type === 'queen'){ 
       possibleMoves = checker.getPossibleQueenMoves(gameData); 
-    }
+    };
      
     for(let move of possibleMoves){
 
@@ -48,7 +48,7 @@ class GameData {
     } 
 
     selectedCell = table.rows[checker.row].cells[checker.col];
-    selectedCell.classList.add('selected')
+    selectedCell.classList.add('selected');
     selectedChecker = checker; 
   };
   
@@ -56,7 +56,7 @@ class GameData {
 
     for(let i = 0; i < this.checkers.length; i++){
 
-      let checker = this.checkers[i]
+      let checker = this.checkers[i];
       if(checker.row === row && checker.col === col){
 
         this.checkers.splice(i, 1);
@@ -176,7 +176,7 @@ class GameData {
     // remember if checker is pawn or queen.
     if(selectedChecker.type !== 'berserker'){
     lastCheckerType = selectedChecker.type; 
-    } 
+    };
     
     if(selectedChecker.type === 'berserker'){
 
@@ -202,7 +202,7 @@ class GameData {
         boardInit();
         gameData.switchTurn(); 
         return true;
-      } 
+      }; 
     }
     return false;
   };

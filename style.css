@@ -25,14 +25,12 @@ td{
 
 .dark-cell{
   background-image: url(./img/Black_Cell.png);
-  /* background-color: rgb(51, 51, 51); */
   height: 80px;
   width: 80px;
 }
 
 .white-cell{
   background-image: url(./img/White_Cell.png);
-  /* background-color: rgb(255, 255, 255); */
   height: 80px;
   width: 80px; 
 }
@@ -41,6 +39,9 @@ img{
   width: 60px;
   height: 60px; 
 }
+
+
+/* game marks */
 
 .selected{
   border: 3px solid rgb(0, 255, 0); 
@@ -68,7 +69,6 @@ img{
   left: 50%;
   transform: translate( -50% , -50%);
   border-radius: 16px; 
-  /* box-shadow: 1px 1px 20px 4000px rgba(128, 128, 128, 0.52);  */
   text-align: center;
   padding-top: 340px;        
   box-sizing: border-box;

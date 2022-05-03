@@ -7,7 +7,6 @@ let winner;
 let div = document.createElement('div');
 let turn = document.createElement('div');
 let lastCheckerType;
-
 const BLACK_PLAYER = 'Black';
 const WHITE_PLAYER = 'White';
 const GAME_CHECKERS = [];  
@@ -24,7 +23,7 @@ const checkForEats = () => {
   checkerCanEat = [];
   const whiteMoves = [];
   const blackMoves = []; 
-
+  
   for(let checker of gameData.checkers){
 
     let possibleMoves;
@@ -40,14 +39,14 @@ const checkForEats = () => {
     if(!possibleMoves) return; 
 
     if(checker.player === WHITE_PLAYER && possibleMoves.length !== 0){ 
-      whiteMoves.push(possibleMoves)
-    }
+      whiteMoves.push(possibleMoves);
+    };
     if(checker.player === BLACK_PLAYER && possibleMoves.length !== 0){ 
-      blackMoves.push(possibleMoves)
-    }
+      blackMoves.push(possibleMoves);
+    };
     if(checker.canEat === true && checker.player === gameData.turn){
      checkerCanEat.push(checker);
-    }
+    };
   }
   
   // check if game over.
@@ -61,7 +60,7 @@ const checkForEats = () => {
     for(let checker of gameData.checkers){
       checker.canMove = false; 
     }
-  }
+  };
 
   checkerCanEat.forEach(checker => {
     checker.canMove = true;
@@ -88,10 +87,10 @@ const clickOnCell = (row, col) => {
    
   // shows current players turn. 
   document.body.appendChild(turn); 
-  turn.classList.add('turn')
+  turn.classList.add('turn');
   turn.innerHTML = `${gameData.turn} player turn`
   
-  // determine witch checker can move.
+  // determine wich checker can move.
   checkForEats(); 
   
   if(selectedChecker === undefined){
@@ -120,13 +119,14 @@ const clickOnCell = (row, col) => {
         if(gameData.tryQueen()) return;
 
         gameData.switchTurn();
-        console.log('move ', gameData.turn)
         boardInit();
         return
       };
       
       if(gameData.tryEat(row, col)){
         gameData.checkForCheckersEnd();
+
+        // reset all checker incase multiple checkers could eat the same enemy.
         for(let checker of gameData.checkers){
 
           checker.canEat = false; 
@@ -168,8 +168,8 @@ const getNewCheckers = () => {
 
     for(let col = 0; col < boardSize; col++){
 
-      if(row % 2 === 0 && col % 2 !== 0 && row < 3 || row === 1 && col % 2 === 0 ){ 
       // if( row === 3 && col % 2 === 0 || row === 2 && col % 2 !== 0){
+      if(row % 2 === 0 && col % 2 !== 0 && row < 3 || row === 1 && col % 2 === 0 ){ 
         GAME_CHECKERS.push(new Checker(row, col, WHITE_PLAYER, 'pawn'));    
       };
       // if(row === 4 && col % 2 !== 0 || row === 5 && col % 2 === 0){
@@ -186,7 +186,6 @@ const getNewCheckers = () => {
     checker.canEat = false;
     id++; 
   }
-  
 };
 
 const boardInit = () => {
@@ -218,12 +217,7 @@ const boardInit = () => {
       }; 
     }
   }
-  
-  
-  // if(!gameData) return; 
   addImages();
-
-
 };
 
 const gameInit = () => {
@@ -231,7 +225,6 @@ const gameInit = () => {
   getNewCheckers();
   gameData = new GameData(GAME_CHECKERS, WHITE_PLAYER);
   boardInit();
-  
 };
 
 gameInit(); 

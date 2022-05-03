@@ -38,9 +38,9 @@ class Checker {
 
             if(advanceTwoRows <= 7 && eatDirection <= 7){
 
-              if(gameData.getChecker(this.row + direction * 2, eatDirection) === undefined && this.player === gameData.turn){
+              if(gameData.getChecker(advanceTwoRows, eatDirection) === undefined && this.player === gameData.turn){
 
-                moves.push([advanceTwoRows, eatDirection]);
+                moves.push([advanceTwoRows, eatDirection]); 
                 if(table.rows[advanceTwoRows] !== undefined){
 
                   if(table.rows[advanceTwoRows].cells[eatDirection] !== undefined){
@@ -62,10 +62,10 @@ class Checker {
 
       moves.forEach(move => {
         if(move[0] < 8 && move[1] < 8 && move[0] >= 0 && move[1] >= 0){
-
-        filteredMoves.push(move)
-      };  
+          filteredMoves.push(move);
+        };  
       }); 
+
       return filteredMoves
     };
   };
@@ -110,13 +110,10 @@ class Checker {
 
       moves.forEach(move => {
         if(move[0] < 8 && move[1] < 8 && move[0] >= 0 && move[1] >= 0){
-
-        filteredMoves.push(move) 
-      };  
+          filteredMoves.push(move) 
+        };  
       });  
-
-      // console.log('berserker moves: ', moves) 
-
+      
       return filteredMoves
     }; 
   };
@@ -175,15 +172,12 @@ class Checker {
 
       moves.forEach(move => {
         if(move[0] < 8 && move[1] < 8 && move[0] >= 0 && move[1] >= 0){
-
-        filteredMoves.push(move) 
-      };  
+          filteredMoves.push(move) 
+        };  
       });  
-
-
+      
       return filteredMoves
     };
-  
   };
 
   getOpponent() {
