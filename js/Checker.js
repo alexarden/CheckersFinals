@@ -146,11 +146,12 @@ class Checker {
             moves.push([rowDirection, colDirection]);
           }else{
             if(gameData.getChecker(rowDirection, colDirection).player !== this.player){
-              moves.push(eatRowMove, eatColMove);
+              // moves.push(eatRowMove, eatColMove);
               if(table.rows[eatRowMove] !== undefined){
                 if(table.rows[eatRowMove].cells[eatColMove] !== undefined){
                   if(gameData.getChecker(eatRowMove, eatColMove) === undefined){
                     if(this.player === gameData.turn){
+                      moves.push(eatRowMove, eatColMove);
                       table.rows[eatRowMove].cells[eatColMove].classList.add('eat');
                       this.canEat = true; 
                       i = 8;
