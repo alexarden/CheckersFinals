@@ -12,7 +12,10 @@ const WHITE_PLAYER = 'White';
 const GAME_CHECKERS = [];  
 const TABLE_ID = 'table';
 const GAME_OVER = 'game over';
-let checkerCanEat = [];
+let checkerCanEat = []; 
+
+// TODO: fix queen can jump over own chekcers.
+// TODO: fix queen can eat the last enemy checker if in row.
 
 const checkForEats = () => {
 
